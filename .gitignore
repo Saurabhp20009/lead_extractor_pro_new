@@ -1,0 +1,22 @@
+# Ignore build and distribution files
+dist/
+build/
+
+# Ignore Node.js dependencies
+node_modules/
+
+# Ignore Playwright and Mac-specific files
+ms-playwright/
+mac-ms-playwright/
+
+# Ignore environment and log files
+.env
+*.log
+
+# Ignore compiled files
+*.exe
+*.dll
+*.so
+*.dylib
+*.pdb
+*.bin

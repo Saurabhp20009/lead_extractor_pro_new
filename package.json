@@ -1,0 +1,130 @@
+{
+  "name": "lead-extractor-pro-ui",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./electron/main.mjs",
+  "description": "Lead extractor pro",
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
+    "@material-tailwind/react": "^2.0.5",
+    "@sentry/electron": "^5.11.0",
+    "autoprefixer": "^10.4.20",
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "bull": "^4.16.5",
+    "cheerio": "^1.0.0",
+    "cra-template": "1.2.0",
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "electron-is-dev": "^3.0.1",
+    "electron-log": "^5.3.0",
+    "file-saver": "^2.0.5",
+    "flowbite": "^2.5.2",
+    "flowbite-react": "^0.10.2",
+    "knex": "^3.1.0",
+    "lucide-react": "^0.475.0",
+    "node-cron": "^3.0.3",
+    "papaparse": "^5.5.1",
+    "path-browserify": "^1.0.1",
+    "playwright": "^1.50.1",
+    "postcss": "^8.5.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-scripts": "5.0.1",
+    "react-table": "^7.8.0",
+    "react-toastify": "^11.0.2",
+    "sqlite3": "^5.1.7",
+    "web-vitals": "^4.2.4",
+    "xlsx": "^0.18.5"
+  },
+  "author": "Name",
+  "build": {
+    "appId": "com.leadextractor.app",
+    "productName": "Lead Extractor Pro",
+    "forceCodeSigning": false,
+    "directories": {
+      "output": "dist"
+    },
+    "asar": false,
+    "files": [
+      "build/**/*",
+      "electron/**/*",
+      "assets/**/*",
+      "public/**/*",
+      "src/**/*",
+      "preload.js",
+      "package.json",
+      "migrations/**/*",
+      "node_modules/**/*",
+      "env/**/*",
+      "ms-playwright/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/images/white_logo.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/images/Lead_extractor_pro.icns"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "extraResources": [
+      {
+        "from": "./ms-playwright",
+        "to": "ms-playwright",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
+  "homepage": "./",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron-start": "electron .",
+    "dev": "concurrently \"npm start\" \"npm run electron-start\"",
+    "start-worker": "node ./electron/worker.js",
+    "dist": "electron-builder -w -c.extraMetadata.main=electron/main.mjs",
+    "pack": "electron-builder --dir",
+    "build-mac":"electron-builder build --mac"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "babel-loader": "^8.4.1",
+    "concurrently": "^9.1.2",
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8",
+    "tailwindcss": "^3.4.17",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.2"
+  }
+}

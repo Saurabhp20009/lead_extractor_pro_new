@@ -1,0 +1,112 @@
+.test-component {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.test-component button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.test-component button:hover {
+  background-color: #0056b3;
+}
+
+.job-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+}
+
+.form-group input[type="submit"] {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-group input[type="submit"]:hover {
+  background-color: #218838;
+}
+
+.dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+  padding: 20px;
+  background: white;
+  border-radius: 5px;
+  width: auto;
+}
+
+.close-button {
+  float: right;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+  table-layout: fixed; /* Helps in handling oversized content */
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+  word-wrap: break-word; /* Ensures text wraps and does not overflow horizontally */
+  max-width: 200px; /* or any other suitable width */
+}
+
+.scrollable-table {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: 400px; /* Adjust based on your needs */
+  width: 100%; /* Adjust width as per your layout requirements */
+  border: 1px solid #ccc; /* Optional, just for visibility */
+}
