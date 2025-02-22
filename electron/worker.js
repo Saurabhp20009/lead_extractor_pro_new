@@ -36,6 +36,7 @@ function initializeQueues() {
     queues[platform] = createQueue(`${platform}-job-processing`);
     queues[platform].process(async (job) => {
       console.log(`Processing ${platform} job: ${job.id}`);
+      Sentry.captureMessage(`Processing ${platform} job: ${job.id}`);
       return handlers[platform](job);
     });
   });
@@ -51,20 +52,12 @@ function addJob(platform, jobData) {
   if (queues[platform]) {
     queues[platform].add(jobData);
     console.log(`Job added to ${platform} queue.`);
+    Sentry.captureMessage(`Job added to ${platform} queue.`);
 
  
     log.info(`Job added to ${platform} queue.`);
 
 
-    if (mainWindow && !mainWindow.isDestroyed()) {
-
-      console.log("MainWindow+++++++++++")
-      mainWindow.webContents.send('jobs-started', {
-
-        jobData: jobData
-      });
-
-    }
 
   } else {
     console.log(`Queue for ${platform} does not exist.`);
@@ -91,6 +84,7 @@ queue.on('error', (err) => {
 queue.on('completed', async (job, result) => {
   console.log(`Job ${job.id} completed with result: ${result}`);
   process.send({ type: 'job-completed', jobId: job.id, result: result }); // If this worker is a child process
+  Sentry.captureMessage(`Job ${job.id} completed with result: ${result}`);
 
   try {
     await job.remove();
@@ -108,20 +102,10 @@ queue.on('failed', async (job, error) => {
   console.log(`Job ${job.id} failed with error: ${error}`);
   log.info(`Job ${job.id} failed with error: ${error}`)
   console.error(`Failed to remove completed job ${job.id} from queue`, error);
+  Sentry.captureException(`Job ${job.id} failed with error: ${error} ${job.data}`);
 
   process.send({ type: 'job-failed', jobId: job.id, error: error.message }); // If this worker is a child process
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('jobs-failed', {
-      jobId: job.id,
-      jobData: job.data,
-      error: error.message,
-    });
-
-  }
-  else {
-    console.log("Main window is not available")
-  }
-
+ 
   try {
     await job.remove();
 

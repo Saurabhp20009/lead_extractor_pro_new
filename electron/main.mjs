@@ -120,7 +120,7 @@ function createWindow() {
 
 
   const indexPath = `file://${path.join(__dirname, "../build", "index.html")}`;
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(startURL);
 
 
 

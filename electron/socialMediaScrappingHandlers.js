@@ -328,7 +328,7 @@ async function processInstagramJob(job) {
             console.error("No cookie file found in database.");
             throw new Error("No cookie file found in database.")
 
-           
+
         }
 
 
@@ -356,7 +356,7 @@ async function processInstagramJob(job) {
 
             console.error("Unable to access the cookie file", cookiePath);
 
-            throw new Error("Unable to access the cookie file")
+            // throw new Error("Unable to access the cookie file")
         }
 
         try {
@@ -410,7 +410,7 @@ async function processInstagramJob(job) {
 
             console.error("❌ Error reading cookies file:", readError);
 
-            return false;
+            throw new Error("Error reading cookies file")
         }
 
 
@@ -418,24 +418,24 @@ async function processInstagramJob(job) {
 
         let executablePath
 
-        
-         if (app.isPackaged) {
-                if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                    executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') { // win32 is the platform name for Windows
-                    executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
-            } else {
-                if (process.platform === 'darwin') {
-                    executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') {
-                    executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
+
+        if (app.isPackaged) {
+            if (process.platform === 'darwin') { // darwin is the platform name for macOS
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
-        
+        } else {
+            if (process.platform === 'darwin') {
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') {
+                executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+            }
+        }
+
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
         };
 
@@ -443,7 +443,7 @@ async function processInstagramJob(job) {
 
 
         Sentry.captureMessage('instagram working here launched the browser')
-    
+
         //proxy adding 
         if (job.data.proxy) {
             browserOptions.proxy = {
@@ -454,10 +454,10 @@ async function processInstagramJob(job) {
             };
         }
 
-        //launching the browser and a new page
-        const browser = await chromium.launch({
+        // //launching the browser and a new page
+        const browser = await chromium.launch(
             browserOptions
-        });
+        );
 
 
         const context = await browser.newContext();
@@ -481,7 +481,7 @@ async function processInstagramJob(job) {
             state: "visible",
         });
 
-         
+
         Sentry.captureMessage('naviagtion through search')
 
 
@@ -598,14 +598,32 @@ async function processInstagramJob(job) {
             // Initialize an empty array to hold the post information
             let postsInfo = [];
 
-            // let lastScrappedData = job.data.last_scrapped_element || {};
-
-            // let scrollCount = lastScrappedData.lastScroll || 0;
-
-            // scrollCount = scrollCount + 2
 
 
-            let scrollCount = job.data.run_count + 2
+
+            let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
+
+            // Ensure lastScrappedData is parsed only if it's a string
+            if (typeof lastScrappedData === "string") {
+                try {
+                    lastScrappedData = JSON.parse(lastScrappedData);
+                } catch (error) {
+                    console.error("Error parsing lastScrappedData:", error);
+                    lastScrappedData = {}; // Set to empty object if parsing fails
+                }
+            }
+
+            console.log("lastScrappedData", lastScrappedData);
+
+
+            // Ensure lastScrappedData.lastScroll exists before adding
+            let scrollCount = (lastScrappedData.lastScroll || 0) + 2;
+
+
+            console.log("scrollCount", scrollCount)
+
+
+            // let scrollCount = job.data.run_count + 2
 
 
             // Scroll down multiple times to load more posts
@@ -852,7 +870,6 @@ async function processFacebookJob(job) {
                     console.error("❌ Failed to log in and refresh cookies.");
                     throw new Error("Failed to log in and refresh cookies.")
 
-                    return false;
                 }
 
 
@@ -867,26 +884,26 @@ async function processFacebookJob(job) {
         }
 
         let executablePath
-       
+
         if (app.isPackaged) {
-                if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                    executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') { // win32 is the platform name for Windows
-                    executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
-            } else {
-                if (process.platform === 'darwin') {
-                    executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') {
-                    executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
+            if (process.platform === 'darwin') { // darwin is the platform name for macOS
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
-        
+        } else {
+            if (process.platform === 'darwin') {
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') {
+                executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+            }
+        }
+
 
 
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
 
         };
@@ -978,19 +995,39 @@ async function processFacebookJob(job) {
             await page.waitForTimeout(5000);
             await page.press('input[aria-label="Search Facebook"]', "Enter");
 
+
+
+
+            await page.waitForTimeout(5000)
+
             // Wait for the search results to stabilize using specific class names
             const resultSelector = ".x9f619.x1n2onr6.x1ja2u2z"; // Combine classes with dots as they need to be in the same element
             await page.waitForSelector(resultSelector, {
                 timeout: 10000, // Adjust the timeout based on expected load times
             });
 
-            await page.waitForTimeout(10000);
+            await page.waitForTimeout(5000);
 
             let urls = [];
 
-            // let lastScrappedData = job.data.last_scrapped_element || {};
-            let scrollCount = job.data.run_count + 2
-            // scrollCount = scrollCount 
+            let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
+
+            // Ensure lastScrappedData is parsed only if it's a string
+            if (typeof lastScrappedData === "string") {
+                try {
+                    lastScrappedData = JSON.parse(lastScrappedData);
+                } catch (error) {
+                    console.error("Error parsing lastScrappedData:", error);
+                    lastScrappedData = {}; // Set to empty object if parsing fails
+                }
+            }
+
+            console.log("lastScrappedData", lastScrappedData);
+
+            // Ensure lastScrappedData.lastScroll exists before adding
+            let scrollCount = (lastScrappedData.lastScroll || 0) + 6;
+
+            //  scrollCount = scrollCount 
 
 
             console.log("scrollCount", scrollCount)
@@ -1035,6 +1072,8 @@ async function processFacebookJob(job) {
             let uniqueUrls = removeDuplicates(urls);
 
 
+
+
             if (lastScrappedData || !job.data.enforce_update_fetched_data) {
 
                 console.log(job.data.last_scrapped_element);
@@ -1072,7 +1111,7 @@ async function processFacebookJob(job) {
                 }
 
 
-                await page.waitForTimeout(50000);
+                await page.waitForTimeout(5000);
 
                 // Wait for the 'About' content to load and extract required details
                 const categoriesSelector = ".xyamay9.xqmdsaz.x1gan7if.x1swvt13"; // Adjust selector as needed
@@ -1154,7 +1193,6 @@ async function processFacebookJob(job) {
 
         // console.log("last", profileFullData)
 
-        await browser.close();
     } catch (error) {
         console.error("Error during scraping:", error);
         Sentry.captureException("Error during facebook scraping:", error);
@@ -1261,22 +1299,22 @@ async function processTwitterJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app','Contents',  'MacOS', 'firefox');
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
             } else if (process.platform === 'win32') { // Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'firefox-1471', 'firefox', 'firefox.exe');
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app','Contents',  'MacOS', 'firefox');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'firefox-1471', 'firefox', 'firefox.exe');
             }
         }
-    
+
 
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
         }
 
@@ -1417,14 +1455,29 @@ async function processTwitterJob(job) {
 
 
 
-            // let lastScrappedData = job.data.last_scrapped_element || {};
+            let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
 
-            // let scrollCount = lastScrappedData.lastScroll || 0;
+            // Ensure lastScrappedData is parsed only if it's a string
+            if (typeof lastScrappedData === "string") {
+                try {
+                    lastScrappedData = JSON.parse(lastScrappedData);
+                } catch (error) {
+                    console.error("Error parsing lastScrappedData:", error);
+                    lastScrappedData = {}; // Set to empty object if parsing fails
+                }
+            }
 
-            // scrollCount = scrollCount + 2
+            console.log("lastScrappedData", lastScrappedData);
 
 
-            let scrollCount = job.data.run_count + 2
+            // Ensure lastScrappedData.lastScroll exists before adding
+            let scrollCount = (lastScrappedData.lastScroll || 0) + 2;
+
+
+
+
+
+            // let scrollCount = job.data.run_count + 2
 
 
 
@@ -1613,7 +1666,6 @@ async function processTwitterJob(job) {
         console.error("An error occurred:", error);
         Sentry.captureException("Error during twitter scraping:", error);
 
-        await browser.close();
         throw new Error(error)
     } finally {
         // Close the browser (optional)
@@ -1659,7 +1711,6 @@ async function processLinkedinJob(job) {
         if (!fs.existsSync(cookiePath)) {
             console.error("❌ No cookies file found at:", cookiePath);
             throw new Error("No cookies file found")
-            return false;
         }
 
 
@@ -1699,7 +1750,6 @@ async function processLinkedinJob(job) {
                 if (!resultCheck.result) {
                     console.error("❌ Failed to log in and refresh cookies.");
                     throw new Error("Failed to log in and refresh cookies.")
-                    return false;
                 }
 
 
@@ -1715,28 +1765,28 @@ async function processLinkedinJob(job) {
             throw new Error("No cookies found or error parsing cookies");
         }
 
- 
+
         let executablePath
 
 
-        
+
         if (app.isPackaged) {
-                if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                    executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') { // win32 is the platform name for Windows
-                    executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
-            } else {
-                if (process.platform === 'darwin') {
-                    executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') {
-                    executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
+            if (process.platform === 'darwin') { // darwin is the platform name for macOS
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
+        } else {
+            if (process.platform === 'darwin') {
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') {
+                executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+            }
+        }
 
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
 
         };
@@ -1864,22 +1914,38 @@ async function processLinkedinJob(job) {
             const postsFilterSelector = '//button[contains(., "Posts")]';
 
             const isPostsFilterVisible = await page.isVisible(postsFilterSelector);
+
+            await page.waitForTimeout(5000);
+
             if (isPostsFilterVisible) {
                 await page.click(postsFilterSelector);
                 console.log('Clicked on "Posts" filter');
             } else {
                 console.error("Posts filter is not visible or not loaded");
-                return;
+
             }
 
             console.log('Applied "Posts" filter and results are loaded.');
 
 
-            // let lastScrappedData = job.data.last_scrapped_element || {};
-            // let scrollCount = lastScrappedData.lastScroll || 0;
-            // scrollCount = scrollCount + 2
 
-            let scrollCount = job.data.run_count + 2
+            let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
+
+            // Ensure lastScrappedData is parsed only if it's a string
+            if (typeof lastScrappedData === "string") {
+                try {
+                    lastScrappedData = JSON.parse(lastScrappedData);
+                } catch (error) {
+                    console.error("Error parsing lastScrappedData:", error);
+                    lastScrappedData = {}; // Set to empty object if parsing fails
+                }
+            }
+
+            console.log("lastScrappedData", lastScrappedData);
+
+
+            // Ensure lastScrappedData.lastScroll exists before adding
+            let scrollCount = (lastScrappedData.lastScroll || 0) + 2;
 
 
             for (let i = 0; i < scrollCount; i++) {
@@ -1891,6 +1957,10 @@ async function processLinkedinJob(job) {
                     await page.waitForTimeout(3000); // Wait for the page to load new content
 
                     const selector = "button.scaffold-finite-scroll__load-button";
+
+
+                    await page.waitForTimeout(3000); // Wait for the page to load new content
+
                     const showMoreButton = await page.$(selector);
                     if (showMoreButton) {
                         const isAttached = await showMoreButton.evaluate(
@@ -2082,13 +2152,11 @@ async function processLinkedinJob(job) {
 
 
             console.log("Final Profile Details:", profileDetails);
-
-            await page.waitForTimeout(6000);
         }
 
     } catch (error) {
-        await browser.close()
         Sentry.captureException("Error during linkedin scraping:", error);
+        await browser.close()
 
         console.error("Error during LinkedIn search and scrape:", error);
         throw new Error("Error during LinkedIn search and scrape:", error)
@@ -2166,7 +2234,8 @@ async function processRedditJob(job) {
 
                 if (!resultCheck.result) {
                     console.error("❌ Failed to log in and refresh cookies.");
-                    return false;
+                    
+                    // return false;
                 }
 
 
@@ -2182,27 +2251,27 @@ async function processRedditJob(job) {
             throw new Error("No cookies file or error parsing cookies")
         }
 
- 
+
         let executablePath
 
-   
+
         if (app.isPackaged) {
-                if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                    executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') { // win32 is the platform name for Windows
-                    executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
-            } else {
-                if (process.platform === 'darwin') {
-                    executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-                } else if (process.platform === 'win32') {
-                    executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-                }
+            if (process.platform === 'darwin') { // darwin is the platform name for macOS
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
+        } else {
+            if (process.platform === 'darwin') {
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') {
+                executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+            }
+        }
 
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
 
         };
@@ -2347,7 +2416,26 @@ async function processRedditJob(job) {
             // let scrollCount = lastScrappedData.lastScroll || 0;
             // scrollCount = scrollCount + 2
 
-            let scrollCount = job.data.run_count + 2
+
+            let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
+
+            // Ensure lastScrappedData is parsed only if it's a string
+            if (typeof lastScrappedData === "string") {
+                try {
+                    lastScrappedData = JSON.parse(lastScrappedData);
+                } catch (error) {
+                    console.error("Error parsing lastScrappedData:", error);
+                    lastScrappedData = {}; // Set to empty object if parsing fails
+                }
+            }
+
+
+
+
+            // Ensure lastScrappedData.lastScroll exists before adding
+            let scrollCount = (lastScrappedData.lastScroll || 0) + 2;
+
+            console.log("scrollCount", scrollCount)
 
 
             for (let i = 0; i < scrollCount; i++) {
@@ -2521,6 +2609,8 @@ async function processTiktokJob(job) {
 
         Sentry.captureMessage("tiktok jobs started");
 
+        console.log("tiktok job started");
+
 
         let cookies = [];
 
@@ -2530,8 +2620,7 @@ async function processTiktokJob(job) {
 
         if (!cookieFileName) {
             console.error("No cookie file found in database.");
-
-            return false;
+            throw new Error("No cookie file found in database.")
         }
 
 
@@ -2548,7 +2637,7 @@ async function processTiktokJob(job) {
 
         if (!fs.existsSync(cookiePath)) {
             console.error("❌ No cookies file found at:", cookiePath);
-            return false;
+            throw new Error("No cookies file found at:")
         }
 
         const data = await fs.promises.readFile(cookiePath, "utf8");
@@ -2608,22 +2697,22 @@ async function processTiktokJob(job) {
         let executablePath
 
 
-      if (app.isPackaged) {
-              if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                  executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-              } else if (process.platform === 'win32') { // win32 is the platform name for Windows
-                  executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-              }
-          } else {
-              if (process.platform === 'darwin') {
-                  executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-              } else if (process.platform === 'win32') {
-                  executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-              }
-          }
+        if (app.isPackaged) {
+            if (process.platform === 'darwin') { // darwin is the platform name for macOS
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+            }
+        } else {
+            if (process.platform === 'darwin') {
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            } else if (process.platform === 'win32') {
+                executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+            }
+        }
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
 
         };
@@ -2781,54 +2870,19 @@ async function processTiktokJob(job) {
                 waitUntil: "domcontentloaded",
             }); // Change this URL to the appropriate one for your use case
 
-            // If cookies are not valid or session is not recognized, log in manually
-            if (
-                (await page.$(".tiktok-11sviba-Button-StyledButton.ehk74z00")) !== null
-            ) {
-                // Fill in the username and password (as fallback if cookies are expired or invalid)
-                await page.type(
-                    '.tiktok-11to27l-InputContainer.etcs7ny1[type="text"]',
-                    "your_username"
-                );
-                await page.type(
-                    '.tiktok-wv3bkt-InputContainer.etcs7ny1[type="password"]',
-                    "your_password"
-                );
-                await page.click(".tiktok-11sviba-Button-StyledButton.ehk74z00"); // Click the login button
-
-                // Wait for navigation after the login
-                await page.waitForNavigation();
-
-                // Save the new cookies to a file
-                const newCookies = await context.cookies();
-                fs.writeFileSync(cookiesFilePath, JSON.stringify(newCookies, null, 2));
-                console.log("New cookies have been saved.");
-            }
-
-            // const newCookies = await context.cookies();
-            // fs.writeFileSync('../tiktok_leads/tiktok_cookies.json', JSON.stringify(newCookies, null, 2));
-            // console.log("cookies are updated...");
-
-            // // Locate the search box using the specific class for the input and type a query
-            // try {
-            //     await page.waitForTimeout(3000);
-            //     await page.locator('input[type="search"]').click({ force: true });
-            //     await page.type('input[type="search"]', job.data.query, { delay: 10 });
-            //     await page.press('input[name="q"]', "Enter"); // Simulate pressing Enter to search
-            //     await page.waitForNavigation(); // Wait for the search results page to load
-            //     console.log("Search completed successfully.");
-            // } catch (error) {
-            //     console.error("Error performing search:", error);
-            // }
-
 
             try {
                 await page.waitForTimeout(10000);
 
-                await page.waitForSelector('button[role="searchbox"]', { state: 'visible', timeout: 60000 })
+                await page.waitForSelector('button[role="searchbox"]', { state: 'visible', timeout: 600000 })
 
                 // Find the search button using aria-label="Search"
                 const searchButton = page.locator('button[role="searchbox"]').first();
+
+
+                await page.waitForTimeout(5000);
+
+
 
                 // Debug: Check if the button is visible
                 const isVisible = await searchButton.isVisible();
@@ -2865,12 +2919,25 @@ async function processTiktokJob(job) {
 
 
 
-            // let lastScrappedData = job.data.last_scrapped_element || {};
-            // let scrollCount = lastScrappedData.lastScroll || 0;
-            // scrollCount = scrollCount + 2
+            let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
+
+            // Ensure lastScrappedData is parsed only if it's a string
+            if (typeof lastScrappedData === "string") {
+                try {
+                    lastScrappedData = JSON.parse(lastScrappedData);
+                } catch (error) {
+                    console.error("Error parsing lastScrappedData:", error);
+                    lastScrappedData = {}; // Set to empty object if parsing fails
+                }
+            }
 
 
-            let scrollCount = job.data.run_count + 2
+
+
+            // Ensure lastScrappedData.lastScroll exists before adding
+            let scrollCount = (lastScrappedData.lastScroll || 0) + 6;
+
+
 
 
             // Function to scroll the page dynamically
@@ -2931,7 +2998,7 @@ async function processTiktokJob(job) {
                 try {
                     // Navigate to the profile page
                     await page.goto(link, { waitUntil: "domcontentloaded" });
-                    await page.waitForTimeout(5000);
+                    await page.waitForTimeout(10000);
 
                     // Wait for the user container to load
                     const containerSelector =
@@ -3153,10 +3220,10 @@ async function processTiktokJob(job) {
 // }
 
 async function processGoogleMapJob(job) {
+    
     if (!job || !job.data || !job.data.query) {
         console.error("Job data is incomplete or missing.");
         throw new Error("Job data is incomplete or missing.")
-        return;
     }
 
 
@@ -3164,25 +3231,25 @@ async function processGoogleMapJob(job) {
 
 
     let executablePath
-    
-     if (app.isPackaged) {
-            if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
-                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-            }
-        } else {
-            if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-            } else if (process.platform === 'win32') {
-                executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
-            }
+
+    if (app.isPackaged) {
+        if (process.platform === 'darwin') { // darwin is the platform name for macOS
+            executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+            executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         }
+    } else {
+        if (process.platform === 'darwin') {
+            executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        } else if (process.platform === 'win32') {
+            executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+        }
+    }
 
 
 
     let browserOptions = {
-        headless: true,
+        headless: false,
         executablePath: executablePath
 
     };
@@ -3209,16 +3276,33 @@ async function processGoogleMapJob(job) {
         const url = `https://www.google.com/maps/search/${encodeURIComponent(inputQuery)}`;
         await page.goto(url, { waitUntil: 'networkidle0' });
 
-        // let lastScrappedData = job.data.last_scrapped_element || {};
-        // let scrollCount = lastScrappedData.lastScroll || 0;
-        // scrollCount = scrollCount + 2
 
-        let scrollCount = job.data.run_count + 2
 
+
+
+        let lastScrappedData = job.data.last_scrapped_element || "{}"; // Default to an empty object string
+
+        // Ensure lastScrappedData is parsed only if it's a string
+        if (typeof lastScrappedData === "string") {
+            try {
+                lastScrappedData = JSON.parse(lastScrappedData);
+            } catch (error) {
+                console.error("Error parsing lastScrappedData:", error);
+                lastScrappedData = {}; // Set to empty object if parsing fails
+            }
+        }
+
+
+
+
+        // Ensure lastScrappedData.lastScroll exists before adding
+        let scrollCount = (lastScrappedData.lastScroll || 0) + 2;
 
 
         console.log(lastScrappedData, scrollCount)
         await autoScroll(page, scrollCount);
+
+        await page.waitForTimeout(5000)
 
         const html = await page.content();
         const $ = cheerio.load(html);

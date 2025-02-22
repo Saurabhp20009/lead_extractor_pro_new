@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const flowbite=require('flowbite/tailwind.config.js')
+// const flowbite=require('flowbite/tailwind.config.js')
 
 
 module.exports = {

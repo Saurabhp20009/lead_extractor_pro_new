@@ -10,14 +10,28 @@ const createQueue = (queueName) => {
   const redisOptions = {
     redis: {
       // url: 'rediss://default:AVNS_G9q6fgLvhsm3iBmQEoF@valkey-10c04ba5-vijayantskatyal-23af.h.aivencloud.com:24218',
-      url: 'redis://127.0.0.1:6379',
-      connectTimeout: 5000,         // Connection timeout in milliseconds
+      // url: 'redis://127.0.0.1:6379',
+      // host: '127.0.0.1',
+      // port: 6379,
+
+      host: '137.184.45.3',
+      port: 6379,
+      username: "lead_extractor_pro",
+      password: "##$%^&",
+      // tls: {                  // Enable TLS
+      //   rejectUnauthorized: false  // This should be true in production for verified certificates
+      // },
+      // port: 24218, // Redis port
+      // host: 'valkey-10c04ba5-vijayantskatyal-23af.h.aivencloud.com', // Redis host
+      // password: 'AVNS_G9q6fgLvhsm3iBmQEoF', // Password if needed
+      connectTimeout: 5000,
+      // Connection timeout in milliseconds
+      // tls:true,
+      // enableTLSForSentinelMode: false
     }
   };
 
   try {
-
-
 
     const queue = new Bull(queueName, redisOptions);  // Pass the Redis options object
 
