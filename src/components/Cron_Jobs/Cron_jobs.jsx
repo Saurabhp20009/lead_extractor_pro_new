@@ -203,6 +203,26 @@ function CronJobs() {
     };
   }, []);
 
+  useEffect(() => {
+    const handleJobAdded = (event, data) => {
+      console.log("****data****", data);
+      if (data.success) {
+        // setJobMessage(`Job added successfully: ID ${data.jobId}`);
+      } else {
+        // setJobMessage(`Failed to add job: ${data.message}`);
+      }
+    };
+
+    window.electron.ipcRenderer.on("job-added", handleJobAdded);
+
+    console.log("first")
+
+    // Cleanup function to remove the listener when the component unmounts
+    // return () => {
+    //   window.electron.ipcRenderer.removeListener("job-added", handleJobAdded);
+    // };
+  }, []);
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <h2
@@ -219,17 +239,17 @@ function CronJobs() {
         Add, Track & Execute Jobs Seamlessly
       </p>
 
-        <div style={{ display: "flex", justifyContent: "end", padding: "2vh" }}>
-          <button
-            type="button"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            onClick={() => {
-              setIsAddJobsModalOpen(true);
-            }}
-          >
-            Add Jobs
-          </button>
-        </div>
+      <div style={{ display: "flex", justifyContent: "end", padding: "2vh" }}>
+        <button
+          type="button"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          onClick={() => {
+            setIsAddJobsModalOpen(true);
+          }}
+        >
+          Add Jobs
+        </button>
+      </div>
 
       <ToastContainer />
 

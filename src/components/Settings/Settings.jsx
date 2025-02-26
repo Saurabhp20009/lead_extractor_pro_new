@@ -71,6 +71,11 @@ export default function Settings() {
   const [accounts, setAccounts] = useState([]);
   const [delId, setDelId] = useState(null);
   const [isModalProductKeyOpen, setIsModalProductKeyOpen] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState({
+    Redis: false,
+    HeadlessBrowser: false,
+    Database: false,
+  });
 
   const [isDropDownOpen, setDropDownOpen] = useState(false);
 
@@ -111,12 +116,12 @@ export default function Settings() {
     const loginUserResponseHandler = (event, response) => {
       if (response.success) {
         // console.log("login-response-success",response)
-        toast.success(response.message)
+        toast.success(response.message);
         fetchCookiesData(platform);
       } else {
         // console.log("response", response);
         fetchCookiesData(platform);
-        toast.error(response.error)
+        toast.error(response.error);
       }
       window.electron.ipcRenderer.removeListener(
         "login-user-response",
@@ -181,7 +186,6 @@ export default function Settings() {
 
   useEffect(() => {
     fetchCookiesData(platform);
-    handleProductKeyCheck();
   }, [platform, isModalOpen, isModalRemoveModelOpen, isModalProductKeyOpen]);
 
   const handleDropDown = (platformName) => {
@@ -193,6 +197,72 @@ export default function Settings() {
       item.current = item.name === platformName;
     });
   };
+
+  const handleTestDatabaseConnection = () => {
+    window.electron.ipcRenderer.send("test-database-connection");
+
+    window.electron.ipcRenderer.on(
+      "database-connection-result",
+      (event, response) => {
+        if (response.success) {
+          setConnectionStatus((prevState) => ({
+            ...prevState,
+            Database: true,
+          }));
+        } else {
+          setConnectionStatus((prevState) => ({
+            ...prevState,
+            Database: false,
+          }));
+        }
+        console.log("database-response", response);
+      }
+    );
+  };
+
+  const handleTestRedisConnection = () => {
+    window.electron.ipcRenderer.send("test-redis-connection");
+
+    window.electron.ipcRenderer.on(
+      "redis-connection-result",
+      (event, response) => {
+        if (response.success) {
+          setConnectionStatus((prevState) => ({ ...prevState, Redis: true }));
+        } else {
+          setConnectionStatus((prevState) => ({ ...prevState, Redis: false }));
+        }
+        console.log("redis-response", response);
+      }
+    );
+  };
+
+  const handleTestHeadlessBrowserConnection = () => {
+    window.electron.ipcRenderer.send("test-headless-browser");
+
+    window.electron.ipcRenderer.on(
+      "headless-browser-result",
+      (event, response) => {
+        if (response.success) {
+          setConnectionStatus((prevState) => ({
+            ...prevState,
+            HeadlessBrowser: true,
+          }));
+        } else {
+          setConnectionStatus((prevState) => ({
+            ...prevState,
+            HeadlessBrowser: false,
+          }));
+        }
+        console.log("headless-browser-result", response);
+      }
+    );
+  };
+
+  useEffect(() => {
+    handleTestRedisConnection();
+    handleTestDatabaseConnection();
+    handleTestHeadlessBrowserConnection();
+  }, []);
 
   // console.log(isModalOpen, "IUS");
 
@@ -338,6 +408,52 @@ export default function Settings() {
                   No account found
                 </p>
               )}
+            </div>
+
+            <div>
+              <h2 className="text-base/7 font-semibold text-gray-900 text-left">
+                Connections 
+              </h2>
+
+              <ul
+                role="list"
+                className="mt-6 divide-y divide-gray-100 border-t border-gray-200 text-sm/6"
+              >
+                <li className="flex justify-between gap-x-6 py-6">
+                  <div className="font-medium text-gray-900">
+                    Redis 
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  >
+                    {connectionStatus.Redis ? "Connected" : "Not Connected"}
+                  </button>
+                </li>
+                <li className="flex justify-between gap-x-6 py-6">
+                  <div className="font-medium text-gray-900">
+                    Headless browser
+                  </div>
+                  <button
+                    type="button"
+                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  >
+                    {connectionStatus.HeadlessBrowser
+                      ? "Connected"
+                      : "Not Connected"}
+                  </button>
+                </li>
+
+                <li className="flex justify-between gap-x-6 py-6">
+                  <div className="font-medium text-gray-900">Database</div>
+                  <button
+                    type="button"
+                    className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  >
+                    {connectionStatus.Database ? "Connected" : "Not Connected"}
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         </main>

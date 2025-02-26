@@ -309,15 +309,28 @@ async function checkCookieValidity(platform, cookies) {
 
 async function processInstagramJob(job) {
 
+
+    console.log("instagram running")
+
+
+    let browser
+
     try {
 
 
-        console.log("process instagram")
+
 
 
         Sentry.captureMessage("Instagram job is started..");
 
+
+
+
         const userId = job.data.user_data_id;
+
+
+
+
 
         //getting cookie name
         let cookieFileName = await getCookiesName(userId);
@@ -355,6 +368,8 @@ async function processInstagramJob(job) {
         } catch (error) {
 
             console.error("Unable to access the cookie file", cookiePath);
+
+            throw error
 
             // throw new Error("Unable to access the cookie file")
         }
@@ -410,7 +425,7 @@ async function processInstagramJob(job) {
 
             console.error("❌ Error reading cookies file:", readError);
 
-            throw new Error("Error reading cookies file")
+            throw readError
         }
 
 
@@ -424,18 +439,20 @@ async function processInstagramJob(job) {
                 executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') { // win32 is the platform name for Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+
             }
         } else {
             if (process.platform === 'darwin') {
                 executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+                // executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium_headless_shell-1155', 'chrome-win', 'headless_shell.exe');
             }
         }
 
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
         };
 
@@ -455,12 +472,12 @@ async function processInstagramJob(job) {
         }
 
         // //launching the browser and a new page
-        const browser = await chromium.launch(
+        browser = await chromium.launch(
             browserOptions
         );
 
 
-        const context = await browser.newContext();
+        const context = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36' });
         const page = await context.newPage();
 
         //added the cookie into the browser
@@ -794,12 +811,18 @@ async function processInstagramJob(job) {
             return profileFullData;
         }
     } catch (error) {
-        await browser.close();
+        // await browser.close();
         console.error("Error during scraping:", error);
 
         Sentry.captureException("Error during instagram scraping:", error);
 
-        await knexDB("Jobs").where({ id: job.data.id }).update({ state: JSON.stringify({ status: "stopped", message: error.message }) });
+
+        if (browser) {
+            console.log("Closing the browser due to an error.");
+            await browser.close();
+        }
+
+
 
         throw error;
     }
@@ -808,9 +831,16 @@ async function processInstagramJob(job) {
 async function processFacebookJob(job) {
 
 
+    console.log("facebook running")
+
+    let browser;
+
+
+
     try {
 
         Sentry.captureMessage("faecbook jobs started");
+
 
 
         const userId = job.data.user_data_id;
@@ -822,6 +852,8 @@ async function processFacebookJob(job) {
             throw new Error("No cookie file found in database.")
 
         }
+
+
 
 
 
@@ -903,7 +935,7 @@ async function processFacebookJob(job) {
 
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
 
         };
@@ -918,8 +950,8 @@ async function processFacebookJob(job) {
             };
         }
 
-        const browser = await chromium.launch(browserOptions);
-        const context = await browser.newContext();
+        browser = await chromium.launch(browserOptions);
+        const context = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36' });
         const page = await context.newPage();
 
 
@@ -1194,19 +1226,27 @@ async function processFacebookJob(job) {
         // console.log("last", profileFullData)
 
     } catch (error) {
+
+
         console.error("Error during scraping:", error);
         Sentry.captureException("Error during facebook scraping:", error);
+
+        if (browser) {
+            console.log("Closing the browser due to an error.");
+            await browser.close();
+        }
 
         // await browser.close();
         throw error;
     } finally {
-        await browser.close()
+        // await browser.close()
     }
 }
 
 async function processTwitterJob(job) {
 
 
+    let browser;
 
 
     try {
@@ -1221,7 +1261,6 @@ async function processTwitterJob(job) {
         if (!cookieFileName) {
             console.error("No cookie file found in database.");
             throw new Error("No cookie file found in database.")
-            return false;
         }
 
 
@@ -1239,7 +1278,6 @@ async function processTwitterJob(job) {
         if (!fs.existsSync(cookiePath)) {
             console.error("❌ No cookies file found at:", cookiePath);
             throw new Error("No cookie file found in database.")
-            return false;
         }
 
         let cookies = [];
@@ -1297,6 +1335,21 @@ async function processTwitterJob(job) {
 
 
 
+        // if (app.isPackaged) {
+        //     if (process.platform === 'darwin') { // darwin is the platform name for macOS
+        //         executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        //     } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+        //         executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+        //     }
+        // } else {
+        //     if (process.platform === 'darwin') {
+        //         executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        //     } else if (process.platform === 'win32') {
+        //         executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+        //     }
+        // }
+
+
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // macOS
                 executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
@@ -1314,7 +1367,7 @@ async function processTwitterJob(job) {
 
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
         }
 
@@ -1330,7 +1383,7 @@ async function processTwitterJob(job) {
 
 
 
-        const browser = await firefox.launch(browserOptions);
+        browser = await firefox.launch(browserOptions);
         const context = await browser.newContext({
             userAgent:
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36",
@@ -1666,14 +1719,22 @@ async function processTwitterJob(job) {
         console.error("An error occurred:", error);
         Sentry.captureException("Error during twitter scraping:", error);
 
-        throw new Error(error)
+        if (browser) {
+            console.log("Closing the browser due to an error.");
+            await browser.close();
+        }
+
+        throw error
     } finally {
         // Close the browser (optional)
-        await browser.close();
+        // await browser.close();
     }
 }
 
 async function processLinkedinJob(job) {
+
+
+    let browser;
 
 
     try {
@@ -1786,7 +1847,7 @@ async function processLinkedinJob(job) {
 
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
 
         };
@@ -1803,11 +1864,9 @@ async function processLinkedinJob(job) {
 
 
 
-        const browser = await chromium.launch(browserOptions);
+        browser = await chromium.launch(browserOptions);
 
-        const context = await browser.newContext({
-            viewport: { width: 1920, height: 1080 },
-        });
+        const context = await browser.newContext();
 
         const page = await context.newPage();
 
@@ -1893,7 +1952,16 @@ async function processLinkedinJob(job) {
         }
 
         else {
-            await page.goto("https://www.linkedin.com/", { waitUntil: "networkidle" });
+
+            await page.screenshot({ path: 'linkedin1.png' });
+
+
+
+            await page.goto("https://www.linkedin.com/feed", { waitUntil: "networkidle" });
+
+
+            await page.screenshot({ path: 'linkedin2.png' });
+
 
             const searchInputSelector = "input.search-global-typeahead__input";
 
@@ -2156,14 +2224,24 @@ async function processLinkedinJob(job) {
 
     } catch (error) {
         Sentry.captureException("Error during linkedin scraping:", error);
-        await browser.close()
+
 
         console.error("Error during LinkedIn search and scrape:", error);
-        throw new Error("Error during LinkedIn search and scrape:", error)
+
+        if (browser) {
+            console.log("Closing the browser due to an error.");
+            await browser.close();
+        }
+
+        throw error
     }
 }
 
 async function processRedditJob(job) {
+
+    let browser;
+
+
     try {
 
         let cookies = [];
@@ -2194,7 +2272,6 @@ async function processRedditJob(job) {
         if (!fs.existsSync(cookiePath)) {
             console.error("❌ No cookies file found at:", cookiePath);
             throw new Error("No cookies file found at:")
-            return false;
         }
 
 
@@ -2234,7 +2311,7 @@ async function processRedditJob(job) {
 
                 if (!resultCheck.result) {
                     console.error("❌ Failed to log in and refresh cookies.");
-                    
+
                     // return false;
                 }
 
@@ -2271,7 +2348,7 @@ async function processRedditJob(job) {
 
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
 
         };
@@ -2288,10 +2365,12 @@ async function processRedditJob(job) {
 
 
 
-        const browser = await chromium.launch(browserOptions);
+        browser = await chromium.launch(browserOptions);
 
-        const context = await browser.newContext();
+        const context = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36' });
         const page = await context.newPage();
+
+
 
         console.log("reddit");
 
@@ -2382,7 +2461,13 @@ async function processRedditJob(job) {
 
             console.log("Login successful! Now searching...");
 
-            const searchBar = page.locator('input[placeholder="Search Reddit"]').nth(0);
+            // const searchBar = page.locator('input[placeholder="Search Reddit"]').first();
+
+            const searchBar = page.locator('input[placeholder="Search Reddit"][enterkeyhint="search"]');
+
+            await page.screenshot({ path: 'screenshot.png' });
+
+
 
             console.log("searchBar", searchBar);
 
@@ -2590,20 +2675,28 @@ async function processRedditJob(job) {
 
         }
 
-
+        await browser.close();
     } catch (error) {
         console.error("An error occurred during the navigation process:", error);
+
+        if (browser) {
+            console.log("Closing the browser due to an error.");
+            await browser.close();
+        }
+
         Sentry.captureException("Error during reddit scraping:", error);
 
-        await browser.close();
 
-        throw new Error("An error occurred during the navigation process:", error)
+        throw error
     } finally {
-        await browser.close();
+
     }
 }
 
 async function processTiktokJob(job) {
+
+    let browser;
+
     try {
 
 
@@ -2688,7 +2781,7 @@ async function processTiktokJob(job) {
 
         } catch (error) {
             console.log("No cookies found or error parsing cookies");
-            await browser.close();
+
             throw new Error("No cookies found or error parsing cookies")
         }
 
@@ -2712,7 +2805,7 @@ async function processTiktokJob(job) {
         }
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
 
         };
@@ -2733,7 +2826,7 @@ async function processTiktokJob(job) {
 
 
         // Launch the browser in headful mode for debugging; set headless: false if you want to see the browser
-        const browser = await chromium.launch(browserOptions);
+        browser = await chromium.launch(browserOptions);
         const context = await browser.newContext();
 
         // Create a new page
@@ -2866,12 +2959,15 @@ async function processTiktokJob(job) {
 
         else {
             // Navigate to a page that requires authentication to verify if the session is recognized
-            await page.goto("https://www.tiktok.com/explore", {
-                waitUntil: "domcontentloaded",
-            }); // Change this URL to the appropriate one for your use case
+            // Change this URL to the appropriate one for your use case
 
 
             try {
+
+                await page.goto("https://www.tiktok.com/explore", {
+                    waitUntil: "domcontentloaded",
+                });
+
                 await page.waitForTimeout(10000);
 
                 await page.waitForSelector('button[role="searchbox"]', { state: 'visible', timeout: 600000 })
@@ -2915,6 +3011,7 @@ async function processTiktokJob(job) {
                 console.log("Search completed successfully.");
             } catch (error) {
                 console.error("Error performing search:", error);
+                throw error
             }
 
 
@@ -3147,10 +3244,13 @@ async function processTiktokJob(job) {
 
         await browser.close();
     } catch (error) {
-        await browser.close()
         Sentry.captureException("Error during tiktok scraping:", error);
         console.error("An error occurred during the navigation process:", error);
-        throw new Error("An error occurred during the navigation process:", error)
+        if (browser) {
+            console.log("Closing the browser due to an error.");
+            await browser.close();
+        }
+        throw error
     }
 }
 
@@ -3220,7 +3320,13 @@ async function processTiktokJob(job) {
 // }
 
 async function processGoogleMapJob(job) {
-    
+
+
+
+    console.log("google maps working......")
+
+
+
     if (!job || !job.data || !job.data.query) {
         console.error("Job data is incomplete or missing.");
         throw new Error("Job data is incomplete or missing.")
@@ -3249,7 +3355,7 @@ async function processGoogleMapJob(job) {
 
 
     let browserOptions = {
-        headless: false,
+        headless: true,
         executablePath: executablePath
 
     };
@@ -3266,7 +3372,7 @@ async function processGoogleMapJob(job) {
 
 
     const browser = await chromium.launch(browserOptions);
-    const context = await browser.newContext();
+    const context = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36' });
     const page = await context.newPage();
 
     try {
@@ -3316,7 +3422,7 @@ async function processGoogleMapJob(job) {
         Sentry.captureException("Error during google maps scraping:", error);
 
 
-        throw new Error("Error processing Google Maps job:", error)
+        throw error
 
     } finally {
         await page.close();

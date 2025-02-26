@@ -8,16 +8,16 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Settings from "../Settings/Settings";
 import Form from "../Form/Form";
 import Cron_jobs from "../Cron_Jobs/Cron_jobs";
 import DataTable from "../DataTable/DataTable";
 
-
 import { MdDashboard } from "react-icons/md";
 import { MdLeaderboard } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
+import { IoCheckmarkCircle, IoCloseCircle } from "react-icons/io5";
 
 const user = {
   name: "user",
@@ -28,9 +28,6 @@ const user = {
     />
   ),
 };
-
-
-
 
 const navigation = [
   {
@@ -57,6 +54,39 @@ function classNames(...classes) {
 
 export default function Navigation() {
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [notification, setNotification] = useState([]);
+
+  const handleJobNotification = () => {
+    window.electron.ipcRenderer.send("get-job-notification");
+
+    window.electron.ipcRenderer.on("reply-job-notification", (event, data) => {
+      // console.log(data);
+      if (data.success) {
+        setNotification(data.notifications);
+      } else {
+        console.log("Error in getting notification");
+      }
+    });
+  };
+
+  const handleClearNotification = () => {
+    window.electron.ipcRenderer.send("clear-job-notification");
+
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    handleJobNotification();
+    // Set up the interval
+    const intervalId = setInterval(handleJobNotification, 300000); // 300000 milliseconds = 5 minutes
+
+    console.log("iner", intervalId);
+
+    // Clean up the interval on component unmount
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -78,18 +108,13 @@ export default function Navigation() {
           <div className="override-margin px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
-                {/* <div className="shrink-0">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                    className="size-8"
-                  />
-                </div> */}
                 <div className="hidden md:block">
-                
-
                   <div className="ml-10 flex items-baseline space-x-4">
-                  <img src="./LeadExtractorPro2.png" style={{height:"20px",width:"100px"}} alt="Lead Extractor Pro" />
+                    <img
+                      src="./LeadExtractorPro2.png"
+                      style={{ height: "20px", width: "100px" }}
+                      alt="Lead Extractor Pro"
+                    />
                     {navigation.map((item) => (
                       <div key={item.name}>
                         <div style={{ display: "flex" }}>
@@ -122,14 +147,101 @@ export default function Navigation() {
               </div>
               <div className="hidden md:block">
                 <div className="ml-4 flex items-center md:ml-6">
-                  {/* <button
-                    type="button"
-                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    <span className="absolute -inset-1.5" />
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon aria-hidden="true" className="size-6" />
-                  </button> */}
+                  <Menu as="div" className="relative ml-3">
+                    <div>
+                      <MenuButton className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <button
+                          type="button"
+                          className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        >
+                          <span className="absolute -inset-1.5" />
+
+                          <span className="sr-only">View notifications</span>
+
+                          <BellIcon aria-hidden="true" className="size-6" />
+                        </button>
+                      </MenuButton>
+                    </div>
+
+                    <MenuItems
+                      transition
+                      className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-3 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                      style={{
+                        width: "450px",
+                        maxHeight: "600px",
+                        overflowY: "auto",
+                      }}
+                    >
+                      <h4 className="text-lg font-medium text-gray-900 text-center px-3 py-2">
+                        Notifications
+                      </h4>
+                      {notification.length > 0 ? (
+                        notification.map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            style={{
+                              padding: "2vh",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              borderBottom: "1px solid whitesmoke",
+                              borderTop: "1px solid whitesmoke",
+
+                              overflow: "hidden", // Optional, hides text that overflows
+                            }}
+                          >
+                            <div>
+                              {/* {item.status === "completed" ? (
+                                <IoCheckmarkCircle
+                                  style={{
+                                    color: "green",
+                                    margin: "1vh",
+                                    height: "1.5rem",
+                                    width: "1.5rem",
+                                  }}
+                                />
+                              ) : (
+                                <IoCloseCircle
+                                  style={{
+                                    color: "red",
+                                    margin: "1vh",
+                                    height: "1.5rem",
+                                    width: "1.5rem",
+                                  }}
+                                />
+                              )} */}
+
+                              <p className="text-sm font-medium text-gray-900 text-left ">
+                                {item.jobName} is {item.status} : {item.message}{" "}
+                              </p>
+                            </div>
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <p className="text-xs font-small text-gray-900 text-center px-1 py-10">
+                          You're all caught up!
+                        </p>
+                      )}
+
+                      <div
+                        style={{
+                          textAlign: "right",
+                          padding: "1vh",
+                          marginRight: "1.5vh",
+                        }}
+                      >
+                        {" "}
+                        {notification.length > 0 && (
+                          <button
+                            type="button"
+                            className="rounded bg-green-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-2 "
+                            onClick={() => handleClearNotification()}
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                    </MenuItems>
+                  </Menu>
 
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
@@ -196,7 +308,7 @@ export default function Navigation() {
                 </DisclosureButton>
               ))}
             </div>
-            <div className="border-t border-gray-700 pb-3 pt-4">
+            {/* <div className="border-t border-gray-700 pb-3 pt-4">
               <div className="flex items-center px-5">
                 <div className="shrink-0">
                   <img
@@ -234,7 +346,7 @@ export default function Navigation() {
                   </DisclosureButton>
                 ))}
               </div>
-            </div>
+            </div> */}
           </DisclosurePanel>
         </Disclosure>
 

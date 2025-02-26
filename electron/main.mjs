@@ -8,6 +8,7 @@ import { dirname } from 'path';
 import log from 'electron-log'; // Import electron-log
 import fs from 'fs'; // Import the file system module
 import * as Sentry from "@sentry/electron/main";
+import redis from 'redis';
 
 
 // Ensure the database is initialized
@@ -15,7 +16,8 @@ import { fork } from 'child_process';
 import cron from 'node-cron';
 import crypto from 'crypto';
 import { login } from './LoginScript.js';
-import { initializeQueues, addJob } from './worker.js';
+import { addJob, db } from './worker.js';
+import { chromium } from 'playwright';
 
 
 
@@ -29,63 +31,73 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-// Get the directory where the current script is running
-const currentDir = __dirname;
+// // Get the directory where the current script is running
+// const currentDir = __dirname;
 
-// Properly resolve the paths using `path.resolve` which handles absolute paths correctly
-const dbFilePath = path.resolve(currentDir, 'Lead_extractor_pro.sqlite3');
-const migrationsPath = path.resolve(currentDir, '../migrations');
+// // Properly resolve the paths using `path.resolve` which handles absolute paths correctly
+// const dbFilePath = path.resolve(currentDir, 'Lead_extractor_pro.sqlite3');
+// const migrationsPath = path.resolve(currentDir, '../migrations');
 
-// Print paths to check what's actually resolved
-console.log("Resolved database path:", dbFilePath);
-console.log("Resolved migrations path:", migrationsPath);
+// // Print paths to check what's actually resolved
+// console.log("Resolved database path:", dbFilePath);
+// console.log("Resolved migrations path:", migrationsPath);
 
-const knexConfig = {
-  client: 'sqlite3',
-  connection: { filename: dbFilePath },
-  migrations: { directory: migrationsPath, tableName: 'knex_migrations' },
-  useNullAsDefault: true,
-};
+// const knexConfig = {
+//   client: 'sqlite3',
+//   connection: { filename: dbFilePath },
+//   migrations: { directory: migrationsPath, tableName: 'knex_migrations' },
+//   useNullAsDefault: true,
+// };
 
-log.info("Resolved database path:", dbFilePath);
-log.info("Resolved migrations path:", migrationsPath);
+// log.info("Resolved database path:", dbFilePath);
+// log.info("Resolved migrations path:", migrationsPath);
 
-let db;
-
-
+// let db;
 
 
-async function initializeDatabase() {
-  const dbPath = knexConfig.connection.filename;
 
-  if (!fs.existsSync(dbPath)) {
-    console.log("Database does not exist. Creating and running migrations...");
-    db = knex(knexConfig);
-    try {
-      await db.migrate.latest();
-      console.log("Database created and migrations are up to date.");
-    } catch (error) {
-      Sentry.captureException(error)
-      console.error("Error running migrations:", error);
-    }
-  } else {
-    console.log("Database already exists. Ensuring migrations are up to date...");
-    db = knex(knexConfig);
-    try {
-      await db.migrate.latest();
-      console.log("Migrations are up to date.");
-    } catch (error) {
-     
-      Sentry.captureException(error)
-      console.error("Error ensuring migrations are up to date:", error);
-      log.error("Error ensuring migrations are up to date:", error);
-    }
-  }
-}
 
-console.log("****path",process.resourcesPath)
+// async function initializeDatabase() {
+//   const dbPath = knexConfig.connection.filename;
 
-Sentry.captureMessage("****path",process.resourcesPath)
+//   if (!fs.existsSync(dbPath)) {
+//     console.log("Database does not exist. Creating and running migrations...");
+//     db = knex(knexConfig);
+//     try {
+//       await db.migrate.latest();
+//       console.log("Database created and migrations are up to date.");
+//     } catch (error) {
+//       Sentry.captureException(error)
+//       console.error("Error running migrations:", error);
+//     }
+//   } else {
+//     console.log("Database already exists. Ensuring migrations are up to date...");
+//     db = knex(knexConfig);
+//     try {
+//       await db.migrate.latest();
+//       console.log("Migrations are up to date.");
+//     } catch (error) {
+
+//       Sentry.captureException(error)
+//       console.error("Error ensuring migrations are up to date:", error);
+//       log.error("Error ensuring migrations are up to date:", error);
+//     }
+
+//     // Check if the database connection is working
+//     try {
+//       await db.raw('select 1+1 as result');
+//       console.log("Database connection is up and running.");
+//     } catch (error) {
+//       console.error("Failed to connect to the database:", error);
+//       Sentry.captureException(error);
+//     }
+
+//   }
+// }
+
+console.log("****path", process.resourcesPath)
+
+Sentry.captureMessage("****path", process.resourcesPath)
 
 
 let mainWindow;
@@ -103,8 +115,8 @@ function createWindow() {
 
 
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     icon: path.join(__dirname, '../assets/images/LeadExtractorPro 2.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload.js'),
@@ -120,7 +132,7 @@ function createWindow() {
 
 
   const indexPath = `file://${path.join(__dirname, "../build", "index.html")}`;
-  mainWindow.loadURL(startURL);
+  mainWindow.loadURL(indexPath);
 
 
 
@@ -138,6 +150,7 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
 
 
   // Start the worker
@@ -207,8 +220,8 @@ app.on('ready', async () => {
     path: app.getPath('exe')
   });
 
-  await initializeDatabase();
-  await initializeQueues()
+  // await initializeDatabase();
+  // await initializeQueues()
   createWindow();
   setupTray();
   setupCronJobs();
@@ -238,24 +251,18 @@ app.on('activate', () => {
 
 function setupCronJobs() {
   // Every 15 minutes
-  cron.schedule('*/30 * * * * ', async () => {
+  cron.schedule('*/30 * * * *', async () => {
     console.log('Running a task every 30 mins');
 
     const jobs = await db('jobs').select('*').where('frequency', '30');
     jobs.forEach(async (task) => {
       try {
 
-        console.log("+++task", task)
+        // console.log("+++task", task)
 
         const newTask = JSON.parse(task.state)
 
         if (newTask.status === 'started') {
-
-          // Sentry.addBreadcrumb({
-          //   category: 'ipc-event',
-          //   message: 'task started',
-          //   level: Sentry.Severity.Info
-          // });
 
           console.log(`Emitting add-job event for job ID: ${task.id}`);
           console.log(task);
@@ -346,6 +353,25 @@ function setupCronJobs() {
 
 
 
+ipcMain.on('test-database-connection', async (event, arg) => {
+  // Check if the database connection is working
+  try {
+    await db.raw('select 1+1 as result');
+
+    event.reply('database-connection-result', { success: true, message: 'Database connection is up and running' });
+    console.log("Database connection is up and running.");
+  } catch (error) {
+    console.error("Failed to connect to the database:", error);
+
+    event.reply('database-connection-result', { success: false, message: 'Failed to connect to the database' });
+    Sentry.captureException(error);
+  }
+
+
+
+})
+
+
 
 ipcMain.on('submit-form', async (event, formData) => {
   console.log('Form submitted', formData);
@@ -382,6 +408,37 @@ ipcMain.on('submit-form', async (event, formData) => {
 });
 
 
+
+ipcMain.on('test-redis-connection', async (event, arg) => {
+  const client = redis.createClient({
+    socket: {
+      host: '137.184.45.3',
+      port: 6379
+    },
+    password: '##$%^&',
+    username: 'lead_extractor_pro' // Only needed if ACLs are used (Redis 6 and above) 
+
+  });
+
+  client.on('error', (err) => {
+    console.error('Redis Client Error', err);
+    event.reply('redis-connection-result', `Error: ${err.message}`);
+  });
+
+  try {
+    await client.connect();
+    const reply = await client.ping();
+    console.log('Redis PING response:', reply); // Should log "PONG"
+    event.reply('redis-connection-result', { success: true, message: 'Connected to Redis' });
+  } catch (error) {
+    console.error('Failed to PING Redis:', error);
+    event.reply('redis-connection-result', { success: false, message: 'Failed to connect to Redis' });
+  } finally {
+    await client.quit();
+  }
+});
+
+
 ipcMain.on('update-job', async (event, jobId) => {
 
   try {
@@ -400,10 +457,94 @@ ipcMain.on('update-job', async (event, jobId) => {
 
 ipcMain.on('add-job', async (event, jobData) => {
   // const queue = createQueue('job-processing');
-  const job = await addJob(jobData.platforms, jobData);
-  console.log(`Added job: ${job.id}`);
-  log.error('Job is added:')
+  try {
+    const job = await addJob(jobData.platforms, jobData);
+    console.log("%%%%%%%JOBID", job)
+
+    if (!job) {
+      console.error('Failed to add job');
+      Sentry.captureException('Failed to add job');
+      event.reply('job-added', { success: false, message: 'Failed to add job' });
+
+    }
+    else {
+      console.log("job added successfully")
+      event.reply('job-added', { success: true, message: 'Job added successfully', jobId: job });
+    }
+
+
+
+
+    console.log(`Added job: ${jobData.id}`);
+
+
+    // log.info('Job is added:', job.id);
+  } catch (error) {
+    // console.error('Failed to add job:', error);
+    // log.error('Failed to add job:', error);
+    Sentry.captureException(error);
+    // event.reply('job-added', { success: false, message: 'Failed to add job' });
+  }
 });
+
+
+ipcMain.on('test-headless-browser', async (event, arg) => {
+
+
+  try {
+
+    let executablePath
+
+
+    if (app.isPackaged) {
+      if (process.platform === 'darwin') { // darwin is the platform name for macOS
+        executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+      } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+        executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+
+      }
+    } else {
+      if (process.platform === 'darwin') {
+        executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+      } else if (process.platform === 'win32') {
+        executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
+        // executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium_headless_shell-1155', 'chrome-win', 'headless_shell.exe');
+      }
+    }
+
+
+    let browserOptions = {
+      headless: true,
+      executablePath: executablePath
+    };
+
+    // //launching the browser and a new page
+    const browser = await chromium.launch(
+      browserOptions
+    );
+
+
+    const context = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36' });
+    const page = await context.newPage();
+
+
+    await page.goto("https://www.google.com");
+
+    await browser.close();
+
+    event.reply('headless-browser-result', { success: true, message: 'Headless browser test successful' });
+
+  } catch (error) {
+
+    console.error('Failed to test headless browser:', error);
+    Sentry.captureException(error);
+    event.reply('headless-browser-result', { success: false, message: 'Failed to test headless browser' });
+
+  }
+
+
+
+})
 
 ipcMain.on('show-dialog', async (event, args) => {
   const { type, title, message, buttons } = args;
@@ -615,6 +756,39 @@ ipcMain.on('check-productKey-exist', async (event) => {
 
 
 
+ipcMain.on('get-job-notification', async (event) => {
+
+
+  try {
+
+    const jobNotifications = await db('Job_notification').select('*')
+    console.log("jobNotifications", jobNotifications)
+    event.reply('reply-job-notification', { success: true, notifications: jobNotifications });
+
+  } catch (error) {
+    console.error('Failed to fetch job notifications', error);
+    event.reply('reply-job-notification', { success: false, notifications: [] });
+    Sentry.captureException(error);
+  }
+
+})
+
+
+ipcMain.on('clear-job-notification', async (event) => {
+
+  try {
+
+    await db('Job_notification').del();
+
+    event.reply('job-notification-cleared', { success: true, message: 'Job notification cleared successfully' });
+
+  } catch (error) {
+
+    event.reply('job-notification-cleared', { success: false, message: 'Failed to clear job notification' });
+  }
+})
+
+
 
 ipcMain.on('delete-user-data', async (event, id) => {
 
@@ -767,5 +941,5 @@ ipcMain.on("delete-profiles", async (event, profileIds) => {
 });
 
 
-// export {db}
+export { mainWindow }
 

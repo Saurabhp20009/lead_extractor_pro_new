@@ -16,8 +16,8 @@ const createQueue = (queueName) => {
 
       host: '137.184.45.3',
       port: 6379,
-      username: "lead_extractor_pro",
-      password: "##$%^&",
+      //  username: "lead_extractor_pro",
+      // password: "##$%^&",
       // tls: {                  // Enable TLS
       //   rejectUnauthorized: false  // This should be true in production for verified certificates
       // },
@@ -25,9 +25,7 @@ const createQueue = (queueName) => {
       // host: 'valkey-10c04ba5-vijayantskatyal-23af.h.aivencloud.com', // Redis host
       // password: 'AVNS_G9q6fgLvhsm3iBmQEoF', // Password if needed
       connectTimeout: 5000,
-      // Connection timeout in milliseconds
-      // tls:true,
-      // enableTLSForSentinelMode: false
+  
     }
   };
 
