@@ -98,7 +98,7 @@
     "start-worker": "node ./electron/worker.js",
     "dist": "electron-builder -w -c.extraMetadata.main=electron/main.mjs",
     "pack": "electron-builder --dir",
-    "build-mac": "electron-builder build --mac"
+    "build-mac": "electron-builder build --mac --config.extraMetadata.main=electron/main.mjs"
   },
   "eslintConfig": {
     "extends": [
