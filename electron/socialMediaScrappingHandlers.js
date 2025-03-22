@@ -452,7 +452,7 @@ async function processInstagramJob(job) {
 
 
         let browserOptions = {
-            headless: false,
+            headless: true,
             executablePath: executablePath
         };
 
@@ -3349,7 +3349,7 @@ async function processGoogleMapJob(job) {
 
 
     let browserOptions = {
-        headless: false,
+        headless: true,
         executablePath: executablePath
 
     };
