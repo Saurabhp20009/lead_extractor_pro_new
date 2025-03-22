@@ -132,7 +132,7 @@ function createWindow() {
 
 
   const indexPath = `file://${path.join(__dirname, "../build", "index.html")}`;
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(startURL);
 
 
 
@@ -251,7 +251,7 @@ app.on('activate', () => {
 
 function setupCronJobs() {
   // Every 15 minutes
-  cron.schedule('*/30 * * * *', async () => {
+  cron.schedule('*/30 * * * * *', async () => {
     console.log('Running a task every 30 mins');
 
     const jobs = await db('jobs').select('*').where('frequency', '30');
@@ -498,14 +498,14 @@ ipcMain.on('test-headless-browser', async (event, arg) => {
 
     if (app.isPackaged) {
       if (process.platform === 'darwin') { // darwin is the platform name for macOS
-        executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
       } else if (process.platform === 'win32') { // win32 is the platform name for Windows
         executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
 
       }
     } else {
       if (process.platform === 'darwin') {
-        executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
       } else if (process.platform === 'win32') {
         executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         // executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium_headless_shell-1155', 'chrome-win', 'headless_shell.exe');

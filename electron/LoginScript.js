@@ -42,13 +42,13 @@ async function login(platform, email, password) {
   
     if (app.isPackaged) {
         if (process.platform === 'darwin') { // darwin is the platform name for macOS
-            executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
         } else if (process.platform === 'win32') { // win32 is the platform name for Windows
             executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         }
     } else {
         if (process.platform === 'darwin') {
-            executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            executablePath = path.join(__dirname, '..','mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
         } else if (process.platform === 'win32') {
             executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         }

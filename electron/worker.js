@@ -9,7 +9,7 @@ const redis = require('redis');
 const { ipcMain, app } = require("electron");
 const { chromium, firefox } = require("playwright");
 const { createBullBoard } = require('bull-board');
-const { BullAdapter } = require('bull-board/bullAdapter');
+// const { BullAdapter } = require('bull-board/bullAdapter');
 const express = require('express');
 const server = express(); // Using 'server' instead of 'app'
 const os = require('os');
@@ -320,14 +320,14 @@ initializeQueues()
 
 
 
-// Setup Bull Board
-const { router } = createBullBoard(
-  Object.keys(queues).map(key => new BullAdapter(queues[key]))
-);
-server.use('/admin/queues', router);
+// // Setup Bull Board
+// const { router } = createBullBoard(
+//   Object.keys(queues).map(key => new BullAdapter(queues[key]))
+// );
+// server.use('/admin/queues', router);
 
-// Start the server
-server.listen(PORT, () => console.log(`Bull Board running on http://localhost:${PORT}/admin/queues`));
+// // Start the server
+// server.listen(PORT, () => console.log(`Bull Board running on http://localhost:${PORT}/admin/queues`));
 
 
 

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "csrftoken",
+    "value": "5Ympu4O2yeADx7m-vrYDU0",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1774090542.228104,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "datr",
+    "value": "EZfeZ9bo2446fZVgyOTzELKD",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1777200913.910549,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "ig_did",
+    "value": "C18F189E-11B2-4798-91F6-319103F0C695",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1774176931.468926,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "wd",
+    "value": "1280x720",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1743245737,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "dpr",
+    "value": "1",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1743245737,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "mid",
+    "value": "Z96XEQAEAAFxNsUrgZDoR07gTG_e",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1777200915,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "sessionid",
+    "value": "59110517902%3A0jnEsFo3JyJRhd%3A7%3AAYf1hCQjSPu9d7dwXbiStm50C3pl971lkIpFIp6YoA",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1774176931.468706,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ds_user_id",
+    "value": "59110517902",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": 1750416942.228302,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "test_cookie",
+    "value": "CheckForPermission",
+    "domain": ".doubleclick.net",
+    "path": "/",
+    "expires": 1742641835.68606,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "rur",
+    "value": "\"HIL\\05459110517902\\0541774176942:01f7ae58b17bb8d9fc47fedad8f741c9dceeaa648127611d43113ddb210dea19da57526e\"",
+    "domain": ".instagram.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "fr",
+    "value": "0NtxFl9AwX6RU9IwS.AWUZ1HN8XCagSH40VaMGbIU2LCdTgBH5QvyPsQ.Bn3pcu..AAA.0.0.Bn3pcu.AWVEcr9ZxHY",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1750416942.55286,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  }
+]

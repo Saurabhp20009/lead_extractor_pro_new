@@ -257,7 +257,7 @@ export default function DataTable() {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-200 text-sm">
+          <table className="custom-table min-w-full border-collapse border border-gray-200 text-sm">
             <thead>
               <tr className="bg-gray-100 text-xs text-gray-600 uppercase tracking-wider">
                 <th className="p-3 border">
@@ -312,9 +312,9 @@ export default function DataTable() {
                   <td className="p-3 border">
                     {new Date(profile.created_at).toLocaleString()}
                   </td>
-                  <td className="p-3 border">{profile.email}</td>
-                  <td className="p-3 border">{profile.phone}</td>
-                  <td className="p-3 border">{profile.links}</td>
+                  <td className="p-3 border">{ profile.email ?  profile.email : "N/A" }</td>
+                  <td className="p-3 border">{profile.phone ? profile.phone : "N/A"}</td>
+                  <td className="p-3 border">{profile.links ? profile.links : "N/A" }</td>
                 </tr>
               ))}
             </tbody>

@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+
+.custom-table {
+  width: 100%; /* Full width of the container */
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+.custom-table th, .custom-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px;
+}
+.custom-table th {
+  background-color: #f9f9f9;
+}

@@ -436,14 +436,14 @@ async function processInstagramJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') { // win32 is the platform name for Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
 
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
                 // executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium_headless_shell-1155', 'chrome-win', 'headless_shell.exe');
@@ -452,7 +452,7 @@ async function processInstagramJob(job) {
 
 
         let browserOptions = {
-            headless: true,
+            headless: false,
             executablePath: executablePath
         };
 
@@ -770,7 +770,7 @@ async function processInstagramJob(job) {
                         const updataPresent = await UpdatingValuesIfExist(profileLink, name, emails, phones, profileInfo.links)
 
 
-                        if (!updataPresent) {
+                        if (!updataPresent && (emails || phones) ) {
                             console.log("inserting data");
                             await scrapeAndInsertData(
                                 job.data.id,
@@ -919,13 +919,12 @@ async function processFacebookJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+               executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
@@ -1186,7 +1185,7 @@ async function processFacebookJob(job) {
                 const updataPresent = await UpdatingValuesIfExist(link, name, emails, phoneNumber, links)
 
 
-                if (!updataPresent) {
+                if (!updataPresent && (emails || phoneNumber)) {
                     console.log("inserting data");
                     await scrapeAndInsertData(
                         job.data.id,
@@ -1337,13 +1336,12 @@ async function processTwitterJob(job) {
 
         // if (app.isPackaged) {
         //     if (process.platform === 'darwin') { // darwin is the platform name for macOS
-        //         executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-        //     } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+        //        executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');        //     } else if (process.platform === 'win32') { // win32 is the platform name for Windows
         //         executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         //     }
         // } else {
         //     if (process.platform === 'darwin') {
-        //         executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+        //         executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
         //     } else if (process.platform === 'win32') {
         //         executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         //     }
@@ -1352,15 +1350,15 @@ async function processTwitterJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
+                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'firefox-1475', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
             } else if (process.platform === 'win32') { // Windows
-                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'firefox-1471', 'firefox', 'firefox.exe');
+                executablePath = path.join(process.resourcesPath, 'ms-playwright', 'firefox-1475', 'firefox', 'firefox.exe');
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'firefox-1471', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'firefox-1475', 'firefox', 'Nightly.app', 'Contents', 'MacOS', 'firefox');
             } else if (process.platform === 'win32') {
-                executablePath = path.join(__dirname, '..', 'ms-playwright', 'firefox-1471', 'firefox', 'firefox.exe');
+                executablePath = path.join(__dirname, '..', 'ms-playwright', 'firefox-1475', 'firefox', 'firefox.exe');
             }
         }
 
@@ -1665,7 +1663,7 @@ async function processTwitterJob(job) {
 
                     //updataPresent = false;
 
-                    if (!updataPresent) {
+                    if (!updataPresent && (email || phone)) {
                         console.log("inserting data");
 
                         await scrapeAndInsertData(
@@ -1833,13 +1831,12 @@ async function processLinkedinJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+               executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
@@ -1953,14 +1950,14 @@ async function processLinkedinJob(job) {
 
         else {
 
-            await page.screenshot({ path: 'linkedin1.png' });
+            // await page.screenshot({ path: 'linkedin1.png' });
 
 
 
-            await page.goto("https://www.linkedin.com/feed", { waitUntil: "networkidle" });
+            await page.goto("https://www.linkedin.com/feed", { waitForTimeout: 10000 });
 
 
-            await page.screenshot({ path: 'linkedin2.png' });
+            // await page.screenshot({ path: 'linkedin2.png' });
 
 
             const searchInputSelector = "input.search-global-typeahead__input";
@@ -2168,7 +2165,7 @@ async function processLinkedinJob(job) {
 
                     //isLinkInDb = false;
 
-                    if (!isLinkInDb) {
+                    if (!isLinkInDb && (profileData.email !='N/A' || profileData.phone !='N/A')) {
                         console.log("inserting data");
                         await scrapeAndInsertData(
                             job.data.id,
@@ -2334,13 +2331,12 @@ async function processRedditJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+               executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
@@ -2465,7 +2461,7 @@ async function processRedditJob(job) {
 
             const searchBar = page.locator('input[placeholder="Search Reddit"][enterkeyhint="search"]');
 
-            await page.screenshot({ path: 'screenshot.png' });
+            // await page.screenshot({ path: 'screenshot.png' });
 
 
 
@@ -2630,7 +2626,7 @@ async function processRedditJob(job) {
 
                     //isLinkInDB = false;
 
-                    if (!isLinkInDB) {
+                    if (!isLinkInDB && (emails || phoneNumber)) {
                         await scrapeAndInsertData(
                             job.data.id,
                             displayName,
@@ -2792,13 +2788,12 @@ async function processTiktokJob(job) {
 
         if (app.isPackaged) {
             if (process.platform === 'darwin') { // darwin is the platform name for macOS
-                executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+               executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');            } else if (process.platform === 'win32') { // win32 is the platform name for Windows
                 executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
         } else {
             if (process.platform === 'darwin') {
-                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+                executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
             } else if (process.platform === 'win32') {
                 executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
             }
@@ -3195,7 +3190,7 @@ async function processTiktokJob(job) {
                     const isLinkPresent = await UpdatingValuesIfExist(link, data.userTitle, email, phone, data.links);
 
 
-                    if (!isLinkPresent) {
+                    if (!isLinkPresent && (email || phone)) {
                         await scrapeAndInsertData(
                             job.data.id,
                             data.userTitle,
@@ -3216,7 +3211,7 @@ async function processTiktokJob(job) {
 
                 } catch (error) {
                     console.error(`Failed to extract data for ${link}:`, error);
-                    await page.screenshot({ path: `error-${link.split("@")[1]}.png` }); // Capture screenshot for debugging
+                    // await page.screenshot({ path: `error-${link.split("@")[1]}.png` }); // Capture screenshot for debugging
                 }
 
                 await page.waitForTimeout(2000);
@@ -3340,13 +3335,12 @@ async function processGoogleMapJob(job) {
 
     if (app.isPackaged) {
         if (process.platform === 'darwin') { // darwin is the platform name for macOS
-            executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
-        } else if (process.platform === 'win32') { // win32 is the platform name for Windows
+           executablePath = path.join(process.resourcesPath, 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');        } else if (process.platform === 'win32') { // win32 is the platform name for Windows
             executablePath = path.join(process.resourcesPath, 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         }
     } else {
         if (process.platform === 'darwin') {
-            executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1155', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
+            executablePath = path.join(__dirname, '..', 'mac-ms-playwright', 'chromium-1161', 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium');
         } else if (process.platform === 'win32') {
             executablePath = path.join(__dirname, '..', 'ms-playwright', 'chromium-1155', 'chrome-win', 'chrome.exe');
         }
@@ -3355,7 +3349,7 @@ async function processGoogleMapJob(job) {
 
 
     let browserOptions = {
-        headless: true,
+        headless: false,
         executablePath: executablePath
 
     };
@@ -3380,7 +3374,7 @@ async function processGoogleMapJob(job) {
         const inputQuery = job.data.query.replace('/#(\w+)/g;', job.data.query)
 
         const url = `https://www.google.com/maps/search/${encodeURIComponent(inputQuery)}`;
-        await page.goto(url, { waitUntil: 'networkidle0' });
+        await page.goto(url, { waitForTimeout: 10000 });
 
 
 
@@ -3553,7 +3547,7 @@ async function extractBusinessDetails(parents, context, query_id, jobId, scrollC
 
                 console.log("updateExist", updateExist)
 
-                if (!updateExist) {
+                if (!updateExist && (data.phone)) {
                     console.log("scrape & check")
                     await scrapeAndInsertData(
                         query_id,
