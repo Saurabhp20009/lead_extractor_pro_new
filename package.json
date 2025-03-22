@@ -64,7 +64,7 @@
       "migrations/**/*",
       "node_modules/**/*",
       "env/**/*",
-      "ms-playwright/**/*"
+      "mac-ms-playwright/**/*"
     ],
     "win": {
       "target": "nsis",
@@ -79,8 +79,8 @@
     },
     "extraResources": [
       {
-        "from": "./ms-playwright",
-        "to": "ms-playwright",
+        "from": "./mac-ms-playwright",
+        "to": "mac-ms-playwright",
         "filter": [
           "**/*"
         ]
