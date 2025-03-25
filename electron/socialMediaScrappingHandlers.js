@@ -346,7 +346,7 @@ async function processInstagramJob(job) {
 
 
 
-        // Normalize __dirname to use forward slashes
+        // Normalize __dirname to use for`ward` slashes
         const normalizedDirname = __dirname.replace(/\\/g, '/');
 
 
@@ -1261,6 +1261,8 @@ async function processFacebookJob(job) {
         }
 
         // console.log("last", profileFullData)
+
+        await browser.close()
 
     } catch (error) {
 
