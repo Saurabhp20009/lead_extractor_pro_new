@@ -1224,6 +1224,8 @@ async function processFacebookJob(job) {
 
         // console.log("last", profileFullData)
 
+        await browser.close()
+
     } catch (error) {
 
 
