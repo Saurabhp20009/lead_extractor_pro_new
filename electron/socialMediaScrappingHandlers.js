@@ -3420,11 +3420,7 @@ async function processGoogleMapJob(job) {
 
         throw error
 
-    } finally {
-        await page.close();
-        await context.close();
-        await browser.close();
-    }
+    } 
 }
 
 
