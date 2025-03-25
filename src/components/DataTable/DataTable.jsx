@@ -26,7 +26,7 @@ export default function DataTable() {
   }, []);
 
   useEffect(() => {
-    if (selectedJob || selectedJob==null) {
+    if (selectedJob || selectedJob == null) {
       window.electron.ipcRenderer.send("fetch-profiles", selectedJob);
       window.electron.ipcRenderer.on(
         "profile-fetched",
@@ -35,7 +35,6 @@ export default function DataTable() {
             // console.error("Error fetching profiles:", error);
             setProfiles([]);
             setCurrentPage(1); // Reset to the first page on error or no data
-
           } else {
             setProfiles(fetchedProfiles);
             setSelectedRows(new Set());
@@ -200,7 +199,7 @@ export default function DataTable() {
         className="mt-1 text-sm text-gray-500"
         style={{ textAlign: "left", paddingTop: "1vh" }}
       >
-       All captured leads from all jobs or specific job
+        All captured leads from all jobs or specific job
       </p>
 
       <div className="p-6 bg-white rounded-lg shadow-md">
@@ -212,7 +211,10 @@ export default function DataTable() {
               onChange={(e) => setSelectedJob(e.target.value)}
               className="border border-gray-300 rounded-md px-3 py-2 text-xs"
             >
-              <option key={null} value="all"> All job</option>
+              <option key={null} value="all">
+                {" "}
+                All job
+              </option>
               {jobs.map((job) => (
                 <option key={job.id} value={job.id}>
                   {job.title} - {job.platform}
@@ -257,7 +259,7 @@ export default function DataTable() {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-gray-200 text-sm">
+          <table className="custom-table min-w-full border-collapse border border-gray-200 text-sm">
             <thead>
               <tr className="bg-gray-100 text-xs text-gray-600 uppercase tracking-wider">
                 <th className="p-3 border">
@@ -296,7 +298,7 @@ export default function DataTable() {
             </thead>
             <tbody>
               {paginatedProfiles.map((profile, index) => (
-                 <tr key={profile.id} className="hover:bg-gray-50">
+                <tr key={profile.id} className="hover:bg-gray-50">
                   <td className="p-3 border text-center">
                     <input
                       type="checkbox"
@@ -312,9 +314,15 @@ export default function DataTable() {
                   <td className="p-3 border">
                     {new Date(profile.created_at).toLocaleString()}
                   </td>
-                  <td className="p-3 border">{profile.email}</td>
-                  <td className="p-3 border">{profile.phone}</td>
-                  <td className="p-3 border">{profile.links}</td>
+                  <td className="p-3 border">
+                    {profile.email ? profile.email : "N/A"}
+                  </td>
+                  <td className="p-3 border">
+                    {profile.phone ? profile.phone : "N/A"}
+                  </td>
+                  <td className="p-3 border">
+                    {profile.links ? profile.links : "N/A"}
+                  </td>
                 </tr>
               ))}
             </tbody>

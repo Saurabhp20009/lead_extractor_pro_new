@@ -132,7 +132,7 @@ function createWindow() {
 
 
   const indexPath = `file://${path.join(__dirname, "../build", "index.html")}`;
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(startURL);
 
 
 
@@ -251,7 +251,7 @@ app.on('activate', () => {
 
 function setupCronJobs() {
   // Every 15 minutes
-  cron.schedule('*/30 * * * *', async () => {
+  cron.schedule('*/30 * * * * *', async () => {
     console.log('Running a task every 30 mins');
 
     const jobs = await db('jobs').select('*').where('frequency', '30');

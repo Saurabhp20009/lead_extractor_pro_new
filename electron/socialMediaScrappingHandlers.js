@@ -489,6 +489,39 @@ async function processInstagramJob(job) {
         console.log("Navigating and searching for:", job.data.query);
 
 
+
+
+
+
+        // Try to handle the "Not now" button if it appears
+
+        try {
+            // Use waitForSelector with a boolean check to manage optional presence
+            const isModalPresent = await page.waitForSelector('div[aria-label="Save your password"]', {
+                state: 'attached',
+                timeout: 5000 // Allows 5 seconds for the modal to appear
+            }).then(() => true, () => false); // Resolve to true if found, false if timeout
+
+            if (isModalPresent) {
+                const notNowButton = page.locator('div[aria-label="Save your password"] >> text="Not now"').nth(1);
+                if (await notNowButton.isVisible({ timeout: 3000 })) { // Ensures button is visible before clicking
+                    await notNowButton.click();
+                    console.log('Clicked on "Not now" button successfully.');
+                } else {
+                    console.log('"Not now" button not visible, but modal was detected.');
+                }
+            } else {
+                console.log('Modal did not appear or was not detected within 5 seconds.');
+            }
+        } catch (error) {
+            // General error catching to prevent script termination
+            console.log(`Error during modal interaction: ${error.message}`);
+        }
+
+
+
+
+
         // Wait for the search input and perform search
         await page.waitForSelector('svg[aria-label="Search"]');
 
@@ -594,6 +627,8 @@ async function processInstagramJob(job) {
 
             if (!updataPresent) {
                 console.log("inserting data");
+
+
                 await scrapeAndInsertData(
                     job.data.id,
                     name,
@@ -770,7 +805,9 @@ async function processInstagramJob(job) {
                         const updataPresent = await UpdatingValuesIfExist(profileLink, name, emails, phones, profileInfo.links)
 
 
-                        if (!updataPresent) {
+                        if (!updataPresent && (emails || phones)) {
+
+
                             console.log("inserting data");
                             await scrapeAndInsertData(
                                 job.data.id,
@@ -1186,7 +1223,7 @@ async function processFacebookJob(job) {
                 const updataPresent = await UpdatingValuesIfExist(link, name, emails, phoneNumber, links)
 
 
-                if (!updataPresent) {
+                if (!updataPresent && (emails || phoneNumber)) {
                     console.log("inserting data");
                     await scrapeAndInsertData(
                         job.data.id,
@@ -1665,7 +1702,7 @@ async function processTwitterJob(job) {
 
                     //updataPresent = false;
 
-                    if (!updataPresent) {
+                    if (!updataPresent && (email || phone)) {
                         console.log("inserting data");
 
                         await scrapeAndInsertData(
@@ -1953,14 +1990,14 @@ async function processLinkedinJob(job) {
 
         else {
 
-            await page.screenshot({ path: 'linkedin1.png' });
+            // await page.screenshot({ path: 'linkedin1.png' });
 
 
 
-            await page.goto("https://www.linkedin.com/feed", { waitUntil: "networkidle" });
+            await page.goto("https://www.linkedin.com/feed", { waitForTimeout: 10000 });
 
 
-            await page.screenshot({ path: 'linkedin2.png' });
+            // await page.screenshot({ path: 'linkedin2.png' });
 
 
             const searchInputSelector = "input.search-global-typeahead__input";
@@ -2168,7 +2205,7 @@ async function processLinkedinJob(job) {
 
                     //isLinkInDb = false;
 
-                    if (!isLinkInDb) {
+                    if (!isLinkInDb && (profileData.email != 'N/A' || profileData.phone != 'N/A')) {
                         console.log("inserting data");
                         await scrapeAndInsertData(
                             job.data.id,
@@ -2465,7 +2502,7 @@ async function processRedditJob(job) {
 
             const searchBar = page.locator('input[placeholder="Search Reddit"][enterkeyhint="search"]');
 
-            await page.screenshot({ path: 'screenshot.png' });
+            // await page.screenshot({ path: 'screenshot.png' });
 
 
 
@@ -2630,7 +2667,7 @@ async function processRedditJob(job) {
 
                     //isLinkInDB = false;
 
-                    if (!isLinkInDB) {
+                    if (!isLinkInDB && (emails || phoneNumber)) {
                         await scrapeAndInsertData(
                             job.data.id,
                             displayName,
@@ -3195,7 +3232,7 @@ async function processTiktokJob(job) {
                     const isLinkPresent = await UpdatingValuesIfExist(link, data.userTitle, email, phone, data.links);
 
 
-                    if (!isLinkPresent) {
+                    if (!isLinkPresent && (email || phone)) {
                         await scrapeAndInsertData(
                             job.data.id,
                             data.userTitle,
@@ -3216,7 +3253,7 @@ async function processTiktokJob(job) {
 
                 } catch (error) {
                     console.error(`Failed to extract data for ${link}:`, error);
-                    await page.screenshot({ path: `error-${link.split("@")[1]}.png` }); // Capture screenshot for debugging
+                    // await page.screenshot({ path: `error-${link.split("@")[1]}.png` }); // Capture screenshot for debugging
                 }
 
                 await page.waitForTimeout(2000);
@@ -3254,70 +3291,6 @@ async function processTiktokJob(job) {
     }
 }
 
-// async function processGoogleMapJob(job) {
-//     try {
-//         const start = Date.now();
-//         const browser = await chromium.launch({
-//             headless: false,
-//         });
-//         const context = await browser.newContext();
-//         const page = await context.newPage();
-//         //const query = "book store";
-
-//         // console.log("job", job)
-
-//         try {
-//             await page.goto(
-//                 `https://www.google.com/maps/search/${job.data.query
-//                     .split(" ")
-//                     .join("+")}`
-//             );
-//         } catch (error) {
-//             console.log("error going to page", error);
-//         }
-
-
-
-//         let lastScrappedData = job.data.last_scrapped_element || {};
-//         let scrollCount = lastScrappedData.lastScroll || 0;
-//         scrollCount = scrollCount + 2
-
-
-
-//         console.log(lastScrappedData, scrollCount)
-
-//         await autoScroll(page, scrollCount);
-
-//         const html = await page.content();
-//         const $ = cheerio.load(html);
-//         const aTags = $("a");
-//         const parents = [];
-//         aTags.each((_, el) => {
-//             const href = $(el).attr("href");
-//             if (href && href.includes("/maps/place/")) {
-//                 parents.push($(el).parent());
-//             }
-//         });
-
-//         const businesses = await extractBusinessDetails(
-//             parents,
-//             context,
-//             job.data.id,
-//             job.id,
-//             scrollCount,
-//             lastScrappedData
-//         );
-//         const end = Date.now();
-//         console.log(`Time in seconds: ${Math.floor((end - start) / 1000)}`);
-//         console.log("business", businesses);
-
-
-//         // await browser.close();
-//         return businesses;
-//     } catch (error) {
-//         console.log("error at googleMaps", error.message);
-//     }
-// }
 
 async function processGoogleMapJob(job) {
 
@@ -3372,7 +3345,9 @@ async function processGoogleMapJob(job) {
 
 
     const browser = await chromium.launch(browserOptions);
+
     const context = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36' });
+
     const page = await context.newPage();
 
     try {
@@ -3380,7 +3355,7 @@ async function processGoogleMapJob(job) {
         const inputQuery = job.data.query.replace('/#(\w+)/g;', job.data.query)
 
         const url = `https://www.google.com/maps/search/${encodeURIComponent(inputQuery)}`;
-        await page.goto(url, { waitUntil: 'networkidle0' });
+        await page.goto(url, { waitForTimeout: 10000 });
 
 
 
@@ -3423,11 +3398,6 @@ async function processGoogleMapJob(job) {
 
 
         throw error
-
-    } finally {
-        await page.close();
-        await context.close();
-        await browser.close();
     }
 }
 
@@ -3553,7 +3523,7 @@ async function extractBusinessDetails(parents, context, query_id, jobId, scrollC
 
                 console.log("updateExist", updateExist)
 
-                if (!updateExist) {
+                if (!updateExist && data.phone) {
                     console.log("scrape & check")
                     await scrapeAndInsertData(
                         query_id,

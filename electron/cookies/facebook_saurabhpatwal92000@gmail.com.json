@@ -1,0 +1,92 @@
+[
+  {
+    "name": "datr",
+    "value": "VU7iZ6D0I4rDsCC0kxZBce5g",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1777444441.759032,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "sb",
+    "value": "VU7iZyloO0LfI3PtOkgm7YLq",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1777444460.244462,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "wd",
+    "value": "1280x720",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1743489264,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "dpr",
+    "value": "0.9999999859116286",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1743489264,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "c_user",
+    "value": "100009600225701",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1774420460.244318,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "xs",
+    "value": "24%3AXiZj8qptViN8HA%3A2%3A1742884453%3A-1%3A4186",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1774420460.244498,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "fr",
+    "value": "0vEc9qP6POpTwF5B4.AWXkhna6iSl9N53Vb1G1gDryh3dxrRcNJMlSAg.Bn4k5V..AAA.0.0.Bn4k5o.AWVPkXYyLgQ",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1750660460.913899,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "ps_l",
+    "value": "1",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1777444460.913956,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ps_n",
+    "value": "1",
+    "domain": ".facebook.com",
+    "path": "/",
+    "expires": 1777444460.913975,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  }
+]

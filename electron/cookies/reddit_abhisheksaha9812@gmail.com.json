@@ -1,0 +1,122 @@
+[
+  {
+    "name": "_GRECAPTCHA",
+    "value": "09ANOXeZwy6HlZexOC9bsJoC6awiaDK3y6m__g2Sv4rMC5j_uY0RsY11FXjgtG_Sq0qTdbJ0TOFVS6AYLDkhAU2Jw",
+    "domain": "www.google.com",
+    "path": "/recaptcha",
+    "expires": 1748168276.865036,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "rdt",
+    "value": "70d4267ba0f86e17df17e2bf77d6eef1",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "edgebucket",
+    "value": "sr4n6tCfaaxcN98VpQ",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": 1767175612.856374,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "csv",
+    "value": "2",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": 1767175613.199009,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "loid",
+    "value": "000000000xxx85xj57.2.1712658658558.Z0FBQUFBQm5SWjI3NzNFNEx4U05Rczh5d1BFZnZIMnlBYXJ0c0JfMmM3Q1Vxb2p4TmxwcGhWc1lDS3pYNVdQREJac1RWSFZTTThuNlpEc2tDcFM1Yms4WDRIdjJmcDJfTEdYc1dxRG9IVlhLS3dkSVA1VVBSMk1SZjJBNHFTdW41ZWlKR183enh2MDM",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": 1767175626.474022,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "NID",
+    "value": "519=PrL5tYZM0RQ21l0bIf3yrLpEal_FA4hn_kn-QUJahUzHcyUG8b6ZTYbE2Laot4JFS5UPmFaFMdKFAxzLP8sZYLUrMbtj5Fqm1zvy47ONDDCbpAzQ6I9PXHuwGpCDB43VUaLQPxmGUy6_2Lsu3QXS6A1kcBFw1tNRMEvgaFKaGDV-_KgiHKM",
+    "domain": ".google.com",
+    "path": "/",
+    "expires": 1748426827.692812,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "reddit_chat_view",
+    "value": "closed",
+    "domain": "www.reddit.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "theme",
+    "value": "2",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": 1764152271,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "reddit_session",
+    "value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IlNIQTI1NjpsVFdYNlFVUEloWktaRG1rR0pVd1gvdWNFK01BSjBYRE12RU1kNzVxTXQ4IiwidHlwIjoiSldUIn0.eyJzdWIiOiJ0Ml94eHg4NXhqNTciLCJleHAiOjE3NTEwMDU4MDYuNTAyODA1LCJpYXQiOjE3MzUzNjc0MDYuNTAyODA1LCJqdGkiOiJxbEdLeWxLY2FmX1EyNUF5Um5ZTVFCSE9PeGpDc3ciLCJjaWQiOiJjb29raWUiLCJsY2EiOjE3MTI2NTg2NTg1NTgsInNjcCI6ImVKeUtqZ1VFQUFEX193RVZBTGsiLCJ2MSI6Ijk1NzU0OTcxODcwMjUxLDIwMjQtMTEtMjZUMTA6MDY6NTAsNWJmZTc5OWRjMWQzYjM1MGMxYjhjYzc4ZDZmMjlkNjljYWFmZDc0ZCIsImZsbyI6Mn0.S-24eM0FWKN9EKkVbkVgWzx-YwEe5gYSP-fhDjsqElWpXNCZZxreacO1ZWg2lmZnx50kkFnILVey6yjSWb6lEChTbyo9Vc5Ztr6Q-O1wcSqsCi9PEwJ4YATPRNXQYX7Vf9x4BxJPJOssQ7ZsKvi5Xs9_m3hygrRc1tyhEEcwMz93fAC-n8dcicl_dpMZ4Vt8wlUOV3kIFsg-DREkMFMorcO0q8N3qkYv2WTZmLM22dm55ELd6QdCf4Vk1eWp1pbYmzpmYQSf-PR9X1EtQi47oWBklk9qu91138PrXlb43iGaPoi1OFZ0CZ0i3MszKyJW030dFmDkQm2JAbGxOp9EIA",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": 1751005820.276962,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "token_v2",
+    "value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IlNIQTI1NjpzS3dsMnlsV0VtMjVmcXhwTU40cWY4MXE2OWFFdWFyMnpLMUdhVGxjdWNZIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNzM2MDYzNjExLjA1MjQyNywiaWF0IjoxNzM1OTc3MjExLjA1MjQyNywianRpIjoiTmNkeWl0aDRtRWhURjRJRGZzeFNwR2VoRkxRTHh3IiwiY2lkIjoiMFItV0FNaHVvby1NeVEiLCJsaWQiOiJ0Ml94eHg4NXhqNTciLCJhaWQiOiJ0Ml94eHg4NXhqNTciLCJsY2EiOjE3MTI2NTg2NTg1NTgsInNjcCI6ImVKeGtrZEdPdERBSWhkLUZhNV9nZjVVX20wMXRjWWFzTFFhb2szbjdEVm9jazcwN2NENHBIUDlES29xRkRDWlhncW5BQkZnVHJUREJSdVQ5bkxtM2cyaU5lOHRZc1puQ0JGbXdGRHJrbUxHc2lRUW1lSklheXhzbW9JTE55Rnl1dEdOTkxUMFFKcWhjTXJlRkhwYzJvYmtiaTU2ZEdGVzVyRHlvc1ZmbDB0akdGTFlueGpjYnF3MnB1QzZuTWtuTFF2a3NYdlRqTjlXMzl2bXpfU2EwSjhPS3F1bUIzaGxKQ0c0c2ZwaW0zZDlUazU2dEN4YTE5M3FRMnVkNjNLNTkxaXcwTzdlZjZfbHJJeG1YWTJoLUp2dDMxeS1oQTQ4OEx6UHFBRWFzNFVjWmRtUWRfbFVIVUxtZ0pHTUo0dE1JNU1ybDIzOEp0bXZUdjhidEV6OThNLUttTl96V0ROUnpDZUxRcF9IMUd3QUFfXzhRMWVUUiIsInJjaWQiOiJiTktSUENmUUNwQzJONUx4RWtBTC1LbGlUR3Eyc0JFN1o4REZIXzlPREVrIiwiZmxvIjoyfQ.L7mcgfA-pVGAhwvWDc4L1LXPh4gbWaJ0AcfyXNwK0faDMfd6BdirDXy_v36al9Or-Z8Q_qHjTEztLspBgPrP_oeKzNqfZkcYfDa99_8NDHs-Dl6ktobKx7r0q9M5THEgGlMOjp6A3U8qv6DL8cpgNMpkauUBFilKbl-bxaiCwFZNeLosD8fFWN3pL9p12XuAieqxtUlEnxpi-HiRA6gVsVj05-5GNlMUo6SzmG4tTgZWyxnLtQKUPwqsGRm8lx70ghD3nwRc-foExgPyJip2v0Frx5xNtii3j8fmrRA5N3pRzmh7obXfT9Ewr3V9lp49lYhwCJATbl_AOtsVauxT3A",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": 1736063612.769563,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "session_tracker",
+    "value": "ocjaflgnigbpcllarq.0.1735977588930.Z0FBQUFBQm5lT3Awd1I0UWxRNnl1MklMb3d3ajRfdzdYSXhLOUZRYTVtM3hpb1NVMUhNLWF3ZHl2c0xYMVBuUFdjLXQxR1JEaWZkTTdWMXY0bUtCczVTOERsNjFQYXFWQ2k1U0VKd2I5dmNKWXhfbjJ0T3ZBZTdlVHdxTS0xTFFfanNvdGtvOWk3akU",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "csrf_token",
+    "value": "cd7bdfa769b857e5611cad1989e9224c",
+    "domain": ".reddit.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Strict"
+  }
+]
